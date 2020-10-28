@@ -9,6 +9,7 @@ namespace FlightActionWebApi
     public class Startup : Framework.Core.Commons.Api.StartupBase
     {
         private static string ApiTitle => "Flight Action Web Api";
+
         public Startup(IConfiguration configuration) : base(configuration, new UnityDependencyProvider(), ApiTitle)
         {
 
