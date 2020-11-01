@@ -6,6 +6,7 @@ using Framework.Core.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +38,14 @@ namespace Framework.Core.Base.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddControllers();
+            services.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.ReportApiVersions = true;
+                o.DefaultApiVersion = ApiVersion.Default;
+                o.ApiVersionReader = new HeaderApiVersionReader(Constants.Constants.HttpRequestHeader.ApiVersion.Header);
+            });
+
             services.BuildServiceProvider();
 
             Log.Logger = new LoggerConfiguration()

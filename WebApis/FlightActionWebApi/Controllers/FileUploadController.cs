@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FlightActionWebApi.Controllers
 {
+    [ApiVersion("1.0")]
     [ApiController]
     [Route("api/flightAction")]
     public class FileUploadController : ControllerBase
@@ -17,7 +18,8 @@ namespace FlightActionWebApi.Controllers
         }
 
         // HttpPost api/flightAction/uploadFile
-        [HttpPost("uploadFile")]
+        [HttpPost]
+        [Route("uploadFile")]
         public async Task<IActionResult> UploadFileAsync([FromBody] FileUploadDTO fileUploadDto)
         {
             return Ok(await _fileUploadService.UploadFileAsync(fileUploadDto));
