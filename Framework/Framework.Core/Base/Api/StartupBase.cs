@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Ocelot.Cache.CacheManager;
-using Ocelot.DependencyInjection;
 using Serilog;
 using Unity;
 using Unity.Lifetime;
@@ -40,6 +38,17 @@ namespace Framework.Core.Base.Api
 
             services.AddControllers();
             services.BuildServiceProvider();
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.File($@"{Directory.GetCurrentDirectory()}\log\log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+                .CreateLogger();
+
+            Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
+
+            services.AddSingleton(Log.Logger);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,21 +88,6 @@ namespace Framework.Core.Base.Api
 
                 return configuration;
             }, new SingletonLifetimeManager());
-
-            container.RegisterFactory<ILogger>(m =>
-            {
-                ILogger log = new LoggerConfiguration()
-                    .ReadFrom.Configuration(Configuration)
-                    .Enrich.FromLogContext()
-                    .WriteTo.File($@"{Directory.GetCurrentDirectory()}\log\log.txt", rollingInterval: RollingInterval.Day)
-                    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
-                    .CreateLogger();
-
-                Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
-
-                return log;
-            }, new SingletonLifetimeManager());
-
 
             container.RegisterType<IProLogger, ProLogger>();
 

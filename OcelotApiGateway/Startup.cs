@@ -19,7 +19,7 @@ namespace OcelotApiGateway
 
         public override void ConfigureServices(IServiceCollection services)
         {
-            services.AddOcelot()
+            services.AddOcelot(Configuration)
                 .AddCacheManager(x =>
                 {
                     x.WithDictionaryHandle();

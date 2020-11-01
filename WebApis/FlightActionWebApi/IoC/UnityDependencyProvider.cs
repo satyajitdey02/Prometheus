@@ -5,6 +5,7 @@ using FlightAction.Repository.DBContext;
 using FlightAction.Repository.Repositories;
 using Framework.Core.IoC;
 using Unity;
+using Unity.Lifetime;
 
 namespace FlightActionWebApi.IoC
 {
@@ -12,7 +13,7 @@ namespace FlightActionWebApi.IoC
     {
         public void RegisterDependencies(IUnityContainer container)
         {
-            container.RegisterSingleton<IFlightActionDbContext>();
+            container.RegisterType<IFlightActionDbContext, FlightActionDbContext>(new SingletonLifetimeManager());
             container.RegisterType<IFlightActionManagementRepository, FlightActionManagementRepository>();
             container.RegisterType<IFileUploadService, FileUploadService>();
         }
