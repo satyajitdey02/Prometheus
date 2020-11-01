@@ -1,6 +1,8 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using Framework.Core.IoC;
+using Framework.Core.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +13,10 @@ using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Serilog;
 using Unity;
+using Unity.Lifetime;
+using Log = Serilog.Log;
 
-namespace Framework.Core.Commons.Api
+namespace Framework.Core.Base.Api
 {
     public abstract class StartupBase
     {
@@ -23,9 +27,8 @@ namespace Framework.Core.Commons.Api
         {
             _dependencyProvider = dependencyProvider;
             _apiTitle = apiTitle;
-            Configuration = configuration;
 
-            ConfigureUnityContainer();
+            Configuration = configuration;
         }
 
         protected IConfiguration Configuration { get; }
@@ -35,24 +38,8 @@ namespace Framework.Core.Commons.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            Log.Logger = new LoggerConfiguration()
-                  .ReadFrom.Configuration(Configuration)
-                  .Enrich.FromLogContext()
-                  .WriteTo.File($@"{Directory.GetCurrentDirectory()}\log\log.txt", rollingInterval: RollingInterval.Day)
-                  .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
-                  .CreateLogger();
-
-            Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
-
             services.AddControllers();
             services.BuildServiceProvider();
-            services.AddSingleton(Log.Logger);
-
-            services.AddOcelot()
-                .AddCacheManager(x =>
-                {
-                    x.WithDictionaryHandle();
-                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,9 +64,39 @@ namespace Framework.Core.Commons.Api
             });
         }
 
-        private void ConfigureUnityContainer()
+        // ReSharper disable once UnusedMember.Global
+        // Called on run time
+        public void ConfigureContainer(IUnityContainer container)
         {
-            IUnityContainer container = new UnityContainer();
+            container.RegisterFactory<IConfiguration>(m =>
+            {
+                IConfiguration configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("AppSettings.json", false, true)
+                    .AddJsonFile($"AppSettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+                    .AddEnvironmentVariables()
+                    .Build();
+
+                return configuration;
+            }, new SingletonLifetimeManager());
+
+            container.RegisterFactory<ILogger>(m =>
+            {
+                ILogger log = new LoggerConfiguration()
+                    .ReadFrom.Configuration(Configuration)
+                    .Enrich.FromLogContext()
+                    .WriteTo.File($@"{Directory.GetCurrentDirectory()}\log\log.txt", rollingInterval: RollingInterval.Day)
+                    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+                    .CreateLogger();
+
+                Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
+
+                return log;
+            }, new SingletonLifetimeManager());
+
+
+            container.RegisterType<IProLogger, ProLogger>();
+
             _dependencyProvider.RegisterDependencies(container);
         }
     }

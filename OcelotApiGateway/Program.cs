@@ -3,6 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Unity.Microsoft.DependencyInjection;
 
 namespace OcelotApiGateway
 {
@@ -15,11 +16,9 @@ namespace OcelotApiGateway
 
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((host, config) =>
-                {
-                    config.AddJsonFile(Path.Combine("configuration", "configuration.json"));
-                })
-                .UseStartup<Startup>()
-                .UseSerilog();
+                .ConfigureAppConfiguration((host, config) => { config.AddJsonFile(Path.Combine("configuration", "configuration.json")); })
+                .UseUnityServiceProvider()
+                .UseSerilog()
+                .UseStartup<Startup>();
     }
 }

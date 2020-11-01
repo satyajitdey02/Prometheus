@@ -1,5 +1,4 @@
 ﻿using Framework.Core.IoC;
-using Framework.Core.Logger;
 using Unity;
 
 namespace OcelotApiGateway.IoC
@@ -8,7 +7,7 @@ namespace OcelotApiGateway.IoC
     {
         public void RegisterDependencies(IUnityContainer container)
         {
-            container.RegisterType<IProLogger, ProLogger>();
+            //container.RegisterType<IProLogger, ProLogger>();
         }
     }
 }

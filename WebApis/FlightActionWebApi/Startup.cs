@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StartupBase = Framework.Core.Base.Api.StartupBase;
 
 namespace FlightActionWebApi
 {
-    public class Startup : Framework.Core.Commons.Api.StartupBase
+    public class Startup : StartupBase
     {
         private static string ApiTitle => "Flight Action Web Api";
 

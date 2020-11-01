@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace Framework.Core.Logger
@@ -8,7 +7,7 @@ namespace Framework.Core.Logger
     {
         private readonly ILogger _logger;
 
-        public ProLogger(ILogger logger, IConfiguration configuration)
+        public ProLogger(ILogger logger)
         {
             _logger = logger;
         }

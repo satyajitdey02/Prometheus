@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
+using Unity.Microsoft.DependencyInjection;
 
 namespace FlightActionWebApi
 {
@@ -11,9 +12,10 @@ namespace FlightActionWebApi
             CreateHostBuilder(args).Build().Run();
         }
 
-        private static IWebHostBuilder CreateHostBuilder(string[] args) => 
+        private static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .UseSerilog();
+                .UseUnityServiceProvider()
+                .UseSerilog()
+                .UseStartup<Startup>();
     }
 }
