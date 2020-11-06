@@ -194,5 +194,27 @@ namespace Framework.Core.Utility
 
             return errorResult.DefaultResult;
         }
+
+        public static async Task<TResult> ExecuteAndHandleErrorAsync<TResult>(this Func<Task<TResult>> actionAsync, Func<Exception, TryCatchExtensionResult<TResult>> errorHandler)
+        {
+            ExceptionDispatchInfo capturedException;
+            try
+            {
+                var result = await actionAsync().ConfigureAwait(false);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                capturedException = ExceptionDispatchInfo.Capture(ex);
+            }
+
+            var errorResult = errorHandler(capturedException.SourceException);
+            if (errorResult.RethrowException)
+            {
+                capturedException.Throw();
+            }
+
+            return errorResult.DefaultResult;
+        }
     }
 }

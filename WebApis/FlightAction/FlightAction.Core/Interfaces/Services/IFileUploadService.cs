@@ -5,6 +5,6 @@ namespace FlightAction.Core.Interfaces.Services
 {
     public interface IFileUploadService
     {
-        Task<bool> UploadFileAsync(FileUploadDTO fileUploadDto);
+        Task<bool> ProcessFileAsync(FileUploadDTO fileUploadDto);
     }
 }

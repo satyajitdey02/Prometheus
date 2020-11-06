@@ -1,4 +1,6 @@
-﻿using FlightAction.Core.Interfaces.Repositories;
+﻿using FlightAction.Core.AIRFileParser;
+using FlightAction.Core.Interfaces.Others;
+using FlightAction.Core.Interfaces.Repositories;
 using FlightAction.Core.Interfaces.Services;
 using FlightAction.Core.Services;
 using FlightAction.Repository.DBContext;
@@ -16,6 +18,7 @@ namespace FlightActionWebApi.IoC
             container.RegisterType<IFlightActionDbContext, FlightActionDbContext>(new SingletonLifetimeManager());
             container.RegisterType<IFlightActionManagementRepository, FlightActionManagementRepository>();
             container.RegisterType<IFileUploadService, FileUploadService>();
+            container.RegisterType<IAirFileParser, AirFileParser>();
         }
     }
 }

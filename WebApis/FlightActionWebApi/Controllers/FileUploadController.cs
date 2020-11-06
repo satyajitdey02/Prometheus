@@ -22,7 +22,7 @@ namespace FlightActionWebApi.Controllers
         [Route("uploadFile")]
         public async Task<IActionResult> UploadFileAsync([FromBody] FileUploadDTO fileUploadDto)
         {
-            return Ok(await _fileUploadService.UploadFileAsync(fileUploadDto));
+            return Ok(await _fileUploadService.ProcessFileAsync(fileUploadDto));
         }
     }
 }
