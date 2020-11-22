@@ -1,6 +1,25 @@
 {
     "Routes": [
-        //Flight Action api config
+        //Authentication micro-service config
+        {
+            "DownstreamPathTemplate": "/api/authentication/{everything}",
+            "DownstreamScheme": "https",
+            "DownstreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 44337
+                }
+            ],
+            "UpstreamPathTemplate": "/api/authentication/{everything}",
+            "UpstreamHttpMethod": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+            ]
+        },
+
+        //Flight Action micro-service config
         {
             "DownstreamPathTemplate": "/api/flightAction/{everything}",
             "DownstreamScheme": "https",

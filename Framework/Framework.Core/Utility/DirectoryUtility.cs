@@ -81,12 +81,12 @@ namespace Framework.Core.Utility
                 return Result.Failure($"{nameof(path)} is null/empty");
 
             if (!File.Exists(path))
-                return Result.Ok($"[{path}] is already deleted");
+                return Result.Success($"[{path}] is already deleted");
 
             try
             {
                 File.Delete(path);
-                return Result.Ok();
+                return Result.Success();
             }
             catch (Exception e)
             {
